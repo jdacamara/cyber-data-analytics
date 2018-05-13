@@ -69,28 +69,39 @@ def smote_testing_for_classifier_PR_curve(classifier,label):
 	y_prob = classifier.predict_proba(x_val)[:,1]
 	false_positive_rate, true_positive_rate, thresholds = roc_curve(y_val, y_prob)
 	roc_auc = auc(false_positive_rate, true_positive_rate)
-	plt.plot(false_positive_rate,true_positive_rate, color='red',label = 'Smote ratio = 0.0')
+	plt.plot(false_positive_rate,true_positive_rate, color='red',label = 'Smote ratio = 0.0 with AUC = %.2f' %float(roc_auc))
 	
 	sm = SMOTE(ratio=0.1)
 	x_train10, y_train10 = sm.fit_sample(x_train, y_train)
 	classifier.fit(x_train10, y_train10)
 	y_prob = classifier.predict_proba(x_val)[:,1]
 	false_positive_rate, true_positive_rate, thresholds = roc_curve(y_val, y_prob)
-	plt.plot(false_positive_rate,true_positive_rate, color='green',label = 'Smote ratio = 0.1')
+	roc_auc = auc(false_positive_rate, true_positive_rate)
+	plt.plot(false_positive_rate,true_positive_rate, color='green',label = 'Smote ratio = 0.1 with AUC = %.2f' %float(roc_auc))
 
 	sm = SMOTE(ratio=0.2)
 	x_train20, y_train20 = sm.fit_sample(x_train, y_train)
 	classifier.fit(x_train20, y_train20)
 	y_prob = classifier.predict_proba(x_val)[:,1]
 	false_positive_rate, true_positive_rate, thresholds = roc_curve(y_val, y_prob)
-	plt.plot(false_positive_rate,true_positive_rate, color='blue',label = 'Smote ratio = 0.2')
+	roc_auc = auc(false_positive_rate, true_positive_rate)
+	plt.plot(false_positive_rate,true_positive_rate, color='blue',label = 'Smote ratio = 0.2 with AUC = %.2f' %float(roc_auc))
 
 	sm = SMOTE(ratio=0.3)
 	x_train30, y_train30 = sm.fit_sample(x_train, y_train)
 	classifier.fit(x_train30, y_train30)
 	y_prob = classifier.predict_proba(x_val)[:,1]
 	false_positive_rate, true_positive_rate, thresholds = roc_curve(y_val, y_prob)
-	plt.plot(false_positive_rate,true_positive_rate, color='yellow',label = 'Smote ratio = 0.3')
+	roc_auc = auc(false_positive_rate, true_positive_rate)
+	plt.plot(false_positive_rate,true_positive_rate, color='yellow',label = 'Smote ratio = 0.3 with AUC = %.2f' %float(roc_auc))
+
+	sm = SMOTE()
+	x_train_auto, y_train_auto = sm.fit_sample(x_train, y_train)
+	classifier.fit(x_train_auto, y_train_auto)
+	y_prob = classifier.predict_proba(x_val)[:,1]
+	false_positive_rate, true_positive_rate, thresholds = roc_curve(y_val, y_prob)
+	roc_auc = auc(false_positive_rate, true_positive_rate)
+	plt.plot(false_positive_rate,true_positive_rate, color='pink',label = 'Smote ratio = Auto with AUC = %.2f' %float(roc_auc))
 
 
 	"""

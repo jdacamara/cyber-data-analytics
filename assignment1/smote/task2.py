@@ -11,4 +11,4 @@ classifier3 = RandomForestClassifier(n_estimators=200)
 classifier4 = tree.DecisionTreeClassifier()
 
 
-smote_testing_for_classifier_PR_curve(classifier1,"DecisionTree")
+smote_testing_for_classifier_PR_curve(classifier1,"AdaBoost")
