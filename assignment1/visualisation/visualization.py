@@ -16,7 +16,7 @@ converter = {
 }
 
 
-def get_data(file_name = 'data_for_student_case.csv'):
+def get_data(file_name = '../data_for_student_case.csv'):
 	data = open(file_name,'r')
 
 	(issuercountry_set, txvariantcode_set, currencycode_set, shoppercountry_set, interaction_set,
