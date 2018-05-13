@@ -97,21 +97,28 @@ def amount_currency_scatterplot():
 def heatmap():
 	fraud_data, benign_data, refused_data = get_data()
 	#temp = sns.load_dataset("data_for_student_case.csv")
-	fraud_dic = get_all_values_from_column(fraud_data, 6, 5)
+	fraud_dic = get_all_values_from_column(benign_data, 6, 5)
 
 	fraud_keys = fraud_dic.keys()
 
+	#Benign traffic
+	temp = repeat_arr(fraud_keys,41)
+	amounts = repeat_arr(range(0,410000,10000),5,False)
+	
+	"""
+	#Fraud traffic
 	temp = repeat_arr(fraud_keys,10)
 	amounts = repeat_arr(range(0,100000,10000),5,False)
+	"""
 
-	print len(temp)
-	print len(amounts)
+	#print len(temp)
+	#print len(amounts)
 
 	counted = get_amount_appeared(fraud_dic)
 
 	encountered = []
 	for key in fraud_keys:
-		for amount in range(0,100000,10000):
+		for amount in range(0,410000,10000):
 			encountered.append(counted[key][amount])
 
 	print len(encountered)
@@ -119,7 +126,7 @@ def heatmap():
 	
 	df = pd.DataFrame({'currency': temp, 'amounts': amounts,'encountered': encountered})
 	hm = df.pivot("currency", "amounts", "encountered")
-	ax = sns.heatmap(hm)
+	ax = sns.heatmap(hm, cmap="Greens")
 	plt.show()
 
 	#print df
@@ -150,10 +157,17 @@ def get_amount_appeared(data):
 
 	for key in data.keys():
 		result[key] = {}
-	
 
+
+	"""
+	#Fraud data
 	for key in data:
 		for i in range(0,100000,10000):
+	"""
+
+	#Benign data
+	for key in data:
+		for i in range(0,410000,10000):
 			result[key][i] = 0
 			
 	max_amount = 0 
@@ -165,7 +179,7 @@ def get_amount_appeared(data):
 			usd_amount = convert_to_USD(key, float(amount))
 			if usd_amount > max_amount:
 				max_amount = usd_amount
-				round_max = round(float(usd_amount) / 1000) * 1000
+				round_max = round(float(usd_amount) / 10000) * 10000
 
 
 			rounded = round(float(usd_amount) / 10000) * 10000
