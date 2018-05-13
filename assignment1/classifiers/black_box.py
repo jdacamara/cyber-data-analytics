@@ -31,7 +31,7 @@ def create_voting_classifier():
 	blackBox = VotingClassifier(estimators=[('lr', logistic_regrssion), ('ada', adaBoost),('rnd', random_forest), ('gnb', gnb), ('nn',mlp), ], voting='soft')
 	return blackBox
 
-def prepare_data():
+def prepare_data(filename):
 	data = pd.read_csv(filename)
 	data = data[data.simple_journal != 'Refused']
 	
@@ -50,7 +50,7 @@ def prepare_data():
 
 def black_box(filename = '../data_for_student_case.csv'):
 
-	relevant_data_enconded = prepare_data()
+	relevant_data_enconded = prepare_data(filename)
 
 	#split the data
 	training_features, test_features, \
