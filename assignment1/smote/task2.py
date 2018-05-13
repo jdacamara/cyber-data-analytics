@@ -2,7 +2,7 @@ from sklearn import svm
 from sklearn import linear_model
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier
-from pr_curve import smote_testing_for_classifier_PR_curve, smote_testing_for_class
+from roc_curve import smote_testing_for_classifier_PR_curve, smote_testing_for_class
 from sklearn import tree
 
 classifier1 = AdaBoostClassifier(n_estimators=60)
