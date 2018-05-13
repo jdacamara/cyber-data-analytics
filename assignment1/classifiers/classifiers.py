@@ -27,7 +27,7 @@ def main():
     train = pd.get_dummies(train)
 
     # Define classfiers
-    whitebox = tree.DecisionTreeClassifier()
+    whitebox = tree.DecisionTreeClassifier(max_depth=3)
     blackbox = svm.SVC(kernel='linear', C=1)
 
     # Fit & Cross-validate

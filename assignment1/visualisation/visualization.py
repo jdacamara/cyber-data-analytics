@@ -98,17 +98,18 @@ def heatmap():
 	fraud_data, benign_data, refused_data = get_data()
 	#temp = sns.load_dataset("data_for_student_case.csv")
 
-	"""
+	
 	#Fraud traffic
 	fraud_dic = get_all_values_from_column(fraud_data, 6, 5)
 
 	"""
-	
 	#Benign traffic
 	fraud_dic = get_all_values_from_column(benign_data, 6, 5)
 
+	"""
 	fraud_keys = fraud_dic.keys()
 
+	"""
 	#Benign traffic
 	temp = repeat_arr(fraud_keys,41)
 	amounts = repeat_arr(range(0,410000,10000),5,False)
@@ -117,7 +118,7 @@ def heatmap():
 	#Fraud traffic
 	temp = repeat_arr(fraud_keys,10)
 	amounts = repeat_arr(range(0,100000,10000),5,False)
-	"""
+	
 
 	#print len(temp)
 	#print len(amounts)
@@ -126,7 +127,7 @@ def heatmap():
 
 	encountered = []
 	for key in fraud_keys:
-		for amount in range(0,410000,10000):
+		for amount in range(0,100000,10000):
 			encountered.append(counted[key][amount])
 
 	print len(encountered)
@@ -175,7 +176,7 @@ def get_amount_appeared(data):
 
 	#Benign data
 	for key in data:
-		for i in range(0,410000,10000):
+		for i in range(0,100000,10000):
 			result[key][i] = 0
 			
 	max_amount = 0 
