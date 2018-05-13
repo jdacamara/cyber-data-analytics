@@ -97,6 +97,14 @@ def amount_currency_scatterplot():
 def heatmap():
 	fraud_data, benign_data, refused_data = get_data()
 	#temp = sns.load_dataset("data_for_student_case.csv")
+
+	"""
+	#Fraud traffic
+	fraud_dic = get_all_values_from_column(fraud_data, 6, 5)
+
+	"""
+	
+	#Benign traffic
 	fraud_dic = get_all_values_from_column(benign_data, 6, 5)
 
 	fraud_keys = fraud_dic.keys()
