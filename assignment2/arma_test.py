@@ -3,6 +3,7 @@ from pandas import datetime
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
+from data import TEST_DATA, TRAINING_DATA_1
  
 
 def parser(x):
