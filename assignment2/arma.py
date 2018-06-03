@@ -162,15 +162,6 @@ def list_to_string(l):
 	return result
 
 
-
-
-#print (type(TRAINING_DATA_1))
-#colum = TRAINING_DATA_1['L_T1']
-
 headers = get_cyclic_headers()
-#aic(TRAINING_DATA_1, headers)
-#check_aic(TRAINING_DATA_1)
+
 arma(TRAINING_DATA_1, TRAINING_DATA_2, columns = headers)
-
-
-
