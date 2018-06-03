@@ -67,11 +67,11 @@ def get_cond_prob(fdist, prior_fdist, post, prior):
 	else:
 		return 0
 
-
 # Discretize the data and train an N-grams model
+w = 3
 n = 3
-col = 'P_J256'
-fdist, f2dist = ngram(discretize(TRAINING_DATA_1, col), n)
+col = 'L_T7'
+fdist, f2dist = ngram(discretize(TRAINING_DATA_1, col, readings_per_letter=w, alphabet_size=4, sliding=3*n), n)
 
 # convert the testset to SAX
 discrete_test_data = discretize(TRAINING_DATA_2, col)
