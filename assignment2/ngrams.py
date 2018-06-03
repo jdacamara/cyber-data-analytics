@@ -1,6 +1,6 @@
 from pandas import datetime, read_csv, qcut
 from matplotlib import pyplot
-from data import TEST_DATA, TRAINING_DATA_1
+from data import TEST_DATA, TRAINING_DATA_1, TRAINING_DATA_2
 import numpy as np
 import nltk
 from nltk.util import ngrams as NG
@@ -69,11 +69,12 @@ def get_cond_prob(fdist, prior_fdist, post, prior):
 
 
 # Discretize the data and train an N-grams model
-n = 5
-fdist, f2dist = ngram(discretize(TRAINING_DATA_1), n)
+n = 3
+col = 'P_J256'
+fdist, f2dist = ngram(discretize(TRAINING_DATA_1, col), n)
 
 # convert the testset to SAX
-discrete_test_data = discretize(TEST_DATA)
+discrete_test_data = discretize(TRAINING_DATA_2, col)
 
 # loop through the test data
 conditional_prob = []
@@ -82,14 +83,14 @@ for i in range(n, len(discrete_test_data)):
 	post = discrete_test_data.__getitem__(i)
 	prior = tuple(list(discrete_test_data[i-(n-1):i]))
 
-	print (i)
+	print (len(discrete_test_data))
 
 	# analyze the observed values in the test set
 	# If P(n_t | n_t-2, n_t-1) < a, raise alarm
-	a = 0.1
+	a = 0.05
 	conditional_prob.append(get_cond_prob(fdist, f2dist, post, prior))
 
 # plot
-pyplot.plot(conditional_prob[1:100])
+pyplot.plot(conditional_prob)
 pyplot.axhline(y=a, color='r', linestyle='-')
 pyplot.show()
