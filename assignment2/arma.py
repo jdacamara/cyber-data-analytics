@@ -199,6 +199,6 @@ def list_to_string(l):
 
 headers = get_cyclic_headers()
 
-arma(TRAINING_DATA_1, TRAINING_DATA_2,  add_space = True)
+arma(TRAINING_DATA_1, TEST_DATA,columns = headers,  add_space = True)
 
 #arma(TRAINING_DATA_1, TRAINING_DATA_2, columns = headers)
