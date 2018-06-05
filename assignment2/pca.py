@@ -11,6 +11,7 @@ TRAINING_DATA_2 = read_csv("BATADAL_dataset04.csv", index_col = 'DATETIME', pars
 TRAINING_DATA_2.rename(columns=lambda x: x.strip(), inplace = True)
 TEST_DATA = read_csv("BATADAL_test_dataset.csv",  index_col = 'DATETIME', parse_dates = True)
 
+#Adds the adds to the test data
 def set_attacks(test_set):
 	test_set = test_set.assign(ATT_FLAG=np.zeros(test_set.shape[:][0]))
 	test_set.loc[:,'ATT_FLAG'] = test_set.loc[:, 'ATT_FLAG'].map({0: -999})
@@ -24,10 +25,11 @@ def set_attacks(test_set):
 
 	return test_set
 
-
+#Fills the dataset
 def fill_dataset(dataset):
 	return dataset.fillna(dataset.median(axis = 0))
 
+#Transforms the datset
 def transform_data(dataset):
 	scalar = StandardScaler()
 	x = dataset.iloc[:,0:43].values
@@ -36,6 +38,7 @@ def transform_data(dataset):
 
 	return x,y
 
+#Calculate the result for using PCA
 def overlap_results(actual_values, predictions):
 	false_negative = true_positive = 0
 
@@ -50,7 +53,7 @@ def overlap_results(actual_values, predictions):
 
 	return true_positive,false_negative
 
-
+#Uses pca to determin the square prediction error.
 def pca_task(pca, t, index, y, plot_figure = True):
 	pca_model = pca.transform(t)
 	residual = t - pca.inverse_transform(pca_model)
@@ -77,6 +80,7 @@ def pca_task(pca, t, index, y, plot_figure = True):
 
 	return overlap_results(y.values, na)
 
+#Creates a plot showing the amount of false negative and true positive.
 def best_components(training_data,max_amount_of_components, t, index,y):
 	results = {}
 	for i in range(1, max_amount_of_components):
@@ -93,7 +97,7 @@ def best_components(training_data,max_amount_of_components, t, index,y):
 		true_positive,false_negative = results[key]
 		right.append(true_positive)
 		left.append(false_negative)
-		#git print ("Key = %s has tp = %s and fn = %s" %(key, true_positive, false_negative))
+		#print ("Key = %s has tp = %s and fn = %s" %(key, true_positive, false_negative))
 
 	width = 0.35  
 	ind = np.arange(len(right))
@@ -109,8 +113,7 @@ def best_components(training_data,max_amount_of_components, t, index,y):
 
 
 
-
-
+#main
 test_set = set_attacks(TEST_DATA)
 
 test_set = fill_dataset(test_set)
@@ -121,11 +124,10 @@ x1,y1 = transform_data(training_set1)
 x2,y2 = transform_data(training_set2)
 z, yz = transform_data(test_set)
 
-results = {}
-#for i in range(1,44):
 pca = PCA(n_components = 7)
 pca.fit(x1)
 
 true_positive,false_negative = pca_task(pca ,x1, training_set1.index, y1)
+
 
 best_components(x1,44,x2, training_set2.index, y2)
