@@ -23,6 +23,7 @@ def difference(dataset):
 		diff.append(value)
 	return np.array(diff)
 
+#Calculates the aic for each column.
 def aic(data, headers):
 	aic_orders = {}
 
@@ -75,13 +76,12 @@ def arma(training_dataset, test_data, columns = ['L_T1'], add_space = True):
 		for t in range(len(test_values)):
 			ar_coef, ma_coef = model_fit.arparams, model_fit.maparams
 			resid = model_fit.resid
-			#print (resid)
 			diff = difference(history)
 			yhat = history[-1] + predict(ar_coef, diff) + predict(ma_coef, resid)
 			predictions[column].append(yhat)
 			obs = test_values[t]
 			history.append(obs)
-			#print('>predicted=%.3f, expected=%.3f' % (yhat, obs))
+			print('>predicted=%.3f, expected=%.3f' % (yhat, obs))
 		mse = mean_squared_error(test_values, predictions[column])
 		rmse = np.sqrt(mse)
 		print('Test RMSE: %.3f for column %s' %( rmse, column))	
@@ -91,9 +91,9 @@ def arma(training_dataset, test_data, columns = ['L_T1'], add_space = True):
 
 		train_dates = [x for x in training_dataset['DATETIME']]
 
-		#plot_arma(column, dates, predictions[column], test_values,  std, mean)
-		#plot_residual(column,train_dates, model_fit.resid)
-		#write_out(column, predictions[column], model_fit.resid, mse)
+		plot_arma(column, dates, predictions[column], test_values,  std, mean)
+		plot_residual(column,train_dates, model_fit.resid)
+		write_out(column, predictions[column], model_fit.resid, mse)
 
 		upperbound = mean + (3 * std)
 		lowerbound = mean - (3 * std)
@@ -108,6 +108,8 @@ def arma(training_dataset, test_data, columns = ['L_T1'], add_space = True):
 
 	overlap_results(attack_flags, predictions,bounds,columns)
 
+
+#Calculates the performance for the arma
 def overlap_results(attack_flags,predictions, bounds, columns):
 	true_positive = false_negative = number_of_attacks =  0
 
@@ -125,12 +127,12 @@ def overlap_results(attack_flags,predictions, bounds, columns):
 			if not registered:
 				false_negative = false_negative +1 
 
-	print("false_negative = %s " %false_negative)
-	print("true_positive = %s" %true_positive)
-	print("number_of_attacks = %s" %number_of_attacks)
+	#print("false_negative = %s " %false_negative)
+	#print("true_positive = %s" %true_positive)
+	#print("number_of_attacks = %s" %number_of_attacks)
 
 
-
+#plots the residual of the arma
 def plot_residual(column_name, dates, residuals):
 
 	residuals = DataFrame(residuals)
@@ -148,17 +150,8 @@ def plot_residual(column_name, dates, residuals):
 	#pyplot.show()
 	#print(residuals.describe())
 	
-
-	"""
-	result = [x for x in residuals]
-
-	pyplot(result)
 	
-	pyplot.ylabel(column_name)
-	pyplot.savefig("arma_results/residuals/%s" %column)
-	pyplot.cla()"""
-	
-
+#plots the arma on the given columns
 def plot_arma(column_name, dates,y,y2, std, mean):
 	day_before = dates[0] - timedelta(days=10)
 	last_day = dates[-1] - timedelta(days=10)
@@ -171,8 +164,6 @@ def plot_arma(column_name, dates,y,y2, std, mean):
 
 	pyplot.xlim(day_before, last_day)
 
-	#print ("Length of dates = %s" %len(dates))
-	#print ("Length of predictions = %s" %len(predictions[column]))
 
 	pyplot.plot(dates,y)
 	pyplot.plot(dates,y2)
@@ -181,6 +172,7 @@ def plot_arma(column_name, dates,y,y2, std, mean):
 	pyplot.savefig("arma_results/arma/%s" %column_name)
 	pyplot.close()
 
+#Writes out the lecture to a test file so can be reused.
 def write_out(column_name, predictions, residuals, mse):
 	residuals = DataFrame(residuals)
 	string_predictions = list_to_string(predictions)
@@ -194,6 +186,7 @@ def write_out(column_name, predictions, residuals, mse):
 	f.write(str(mse))
 	f.close()
 
+#Converts a list to a string
 def list_to_string(l):
 	result = ""
 	for x in l:
@@ -206,6 +199,6 @@ def list_to_string(l):
 
 headers = get_cyclic_headers()
 
-arma(TRAINING_DATA_1, TRAINING_DATA_2, columns = headers, add_space = True)
+arma(TRAINING_DATA_1, TRAINING_DATA_2,  add_space = True)
 
 #arma(TRAINING_DATA_1, TRAINING_DATA_2, columns = headers)
