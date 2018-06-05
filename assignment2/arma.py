@@ -37,10 +37,16 @@ def aic(data, headers):
 	return aic_orders
 
 
-def arma(training_dataset, test_data, columns = ['L_T1','L_T2'], add_space = True):
+def arma(training_dataset, test_data, columns = ['L_T1'], add_space = True):
 	aic_orders = aic(training_dataset, columns)
 
+
 	predictions = {}
+	bounds = {}
+
+	attack_flags_name = "" 
+
+
 
 	for column in columns:
 
@@ -55,7 +61,7 @@ def arma(training_dataset, test_data, columns = ['L_T1','L_T2'], add_space = Tru
 		training_data = [x for x in series]
 
 		test_values = test_data[test_column_name].values
-		history = [x for x in test_values]
+		history = [x for x in test_values[:5]]
 		test_values = test_values[5:]
 
 		std = st.stdev(training_data)
@@ -64,7 +70,7 @@ def arma(training_dataset, test_data, columns = ['L_T1','L_T2'], add_space = Tru
 		predictions[column] = list()
 
 		model = ARMA(training_data, order =(aic_orders[column]))
-		model_fit = model.fit(trend='nc', disp=False)
+		model_fit = model.fit( disp=False)
 
 		for t in range(len(test_values)):
 			ar_coef, ma_coef = model_fit.arparams, model_fit.maparams
@@ -78,16 +84,51 @@ def arma(training_dataset, test_data, columns = ['L_T1','L_T2'], add_space = Tru
 			#print('>predicted=%.3f, expected=%.3f' % (yhat, obs))
 		mse = mean_squared_error(test_values, predictions[column])
 		rmse = np.sqrt(mse)
-		print('Test RMSE: %.3f' % rmse)	
+		print('Test RMSE: %.3f for column %s' %( rmse, column))	
 
 		dates = [x for x in test_data['DATETIME']]
 		dates = dates[5:]
 
 		train_dates = [x for x in training_dataset['DATETIME']]
 
-		plot_arma(column, dates, predictions[column], std, mean)
-		plot_residual(column,train_dates, model_fit.resid)
-		write_out(column, predictions[column], model_fit.resid, mse)
+		#plot_arma(column, dates, predictions[column], test_values,  std, mean)
+		#plot_residual(column,train_dates, model_fit.resid)
+		#write_out(column, predictions[column], model_fit.resid, mse)
+
+		upperbound = mean + (3 * std)
+		lowerbound = mean - (3 * std)
+		bounds[column] = (lowerbound,upperbound)
+
+	if add_space:
+		attack_flags_name = ' ATT_FLAG'
+	else:
+		attack_flags_name = 'ATT_FLAG'
+
+	attack_flags =  test_data[attack_flags_name]
+
+	overlap_results(attack_flags, predictions,bounds,columns)
+
+def overlap_results(attack_flags,predictions, bounds, columns):
+	true_positive = false_negative = number_of_attacks =  0
+
+	for i in range(5, len(attack_flags)):
+		if int(attack_flags[i]) == 1:
+			number_of_attacks = number_of_attacks +1 
+
+			registered = False
+			for column in columns :
+				lowerbound, upperbound = bounds[column]
+				if predictions[column][i] < lowerbound or predictions[column][i] > upperbound:
+					true_positive = true_positive + 1
+					registered = True
+					break
+			if not registered:
+				false_negative = false_negative +1 
+
+	print("false_negative = %s " %false_negative)
+	print("true_positive = %s" %true_positive)
+	print("number_of_attacks = %s" %number_of_attacks)
+
 
 
 def plot_residual(column_name, dates, residuals):
@@ -118,7 +159,7 @@ def plot_residual(column_name, dates, residuals):
 	pyplot.cla()"""
 	
 
-def plot_arma(column_name, dates,y, std, mean):
+def plot_arma(column_name, dates,y,y2, std, mean):
 	day_before = dates[0] - timedelta(days=10)
 	last_day = dates[-1] - timedelta(days=10)
 
@@ -133,7 +174,8 @@ def plot_arma(column_name, dates,y, std, mean):
 	#print ("Length of dates = %s" %len(dates))
 	#print ("Length of predictions = %s" %len(predictions[column]))
 
-	pyplot.plot(dates[5:],y[5:])
+	pyplot.plot(dates,y)
+	pyplot.plot(dates,y2)
 	pyplot.xlabel("Date")
 	pyplot.ylabel(column_name)
 	pyplot.savefig("arma_results/arma/%s" %column_name)
@@ -162,15 +204,8 @@ def list_to_string(l):
 	return result
 
 
-
-
-#print (type(TRAINING_DATA_1))
-#colum = TRAINING_DATA_1['L_T1']
-
 headers = get_cyclic_headers()
-#aic(TRAINING_DATA_1, headers)
-#check_aic(TRAINING_DATA_1)
-arma(TRAINING_DATA_1, TRAINING_DATA_2, columns = headers)
+arma(TRAINING_DATA_1, TRAINING_DATA_2, columns = headers, add_space = True)
 
 
 
