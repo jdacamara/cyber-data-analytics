@@ -1,9 +1,11 @@
 from data import TRAINING_DATA_1, get_headers
 from matplotlib import pyplot
 
+#Get all headers and removes the datetime column.
 columns = get_headers()
 columns = columns[1:]
 
+#Creates a plot for all column for the first 300 values
 for column in columns:
 	column_data = TRAINING_DATA_1[column]
 	values = column_data.values
