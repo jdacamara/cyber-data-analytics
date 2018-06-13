@@ -14,8 +14,9 @@ def make_array(data):
 	return [x for x in train]
 
 def get_cyclic_headers():
-	return ['L_T1','L_T2','L_T3','L_T4','L_T5','L_T6','L_T7','P_J256']
+	return ['L_T1','L_T2','L_T3','L_T4','L_T5','L_T6','L_T7']
 
+#Get the data from the dataset and can be called up by other scripts.
 TEST_DATA = get_data("BATADAL_test_dataset.csv")
 TRAINING_DATA_1 = get_data("BATADAL_dataset03.csv")
 TRAINING_DATA_2 = get_data("BATADAL_dataset04.csv")
