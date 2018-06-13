@@ -160,10 +160,13 @@ class SAX(object):
         n = len(x)
         windowIndices = []
         stringRep = []
+        print(n-self.windowSize+1)
         while ptr < n-self.windowSize+1:
             thisSubRange = x[ptr:ptr+self.windowSize]
             (thisStringRep,indices) = self.to_letter_rep(thisSubRange)
             stringRep.append(thisStringRep)
+            if ptr%100 == 0:
+                print(ptr)
             windowIndices.append((ptr, ptr+self.windowSize))
             ptr += moveSize
         return (stringRep,windowIndices)
