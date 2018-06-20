@@ -48,6 +48,12 @@ class Packet():
 		self.flags = data[7]
 		self.tos = data[8]
 		#print (self.tos)
+		self.packets = data[9]
+		#print(self.packets)
+		self.bytes = data[10]
+		self.flows = data[11]
+		self.label = data[12]
+		print(self.label)
 
 
 
