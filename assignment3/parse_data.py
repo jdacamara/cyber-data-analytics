@@ -10,24 +10,28 @@ def ip_and_port(ip_port):
 	temp = ip_port.split(":")
 	if len(temp) == 1:
 		 ip = temp[0]
-		 return ip, False
+		 return ip
 	elif len(temp) == 2:
 		ip = temp[0]
 		port = temp[1]
-		return ip, False
+		return ip
 	elif len(temp) == 6 :
 		ip = ":".join(temp[:6])
-		return ip, False
+		return ip
+	elif len(temp) == 8 or len(temp) == 7:
+		#print(temp)
+		ip = ":".join(temp[:6])
+		return ip
 	else:
-		return "", True
+		ip = ":".join(temp[:6])
+		return ip
 
-		#print( temp)
+def parse_date(date):
+	date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+	return date
+		
 
-
-lines = read_file("capture20110811.pcap.netflow.labeled")
-
-
-class Line():
+class Packet():
 
 	def __init__(self, line):
 		self.parse_line(line)
@@ -35,32 +39,22 @@ class Line():
 	def parse_line(self,line):
 		data = line.split()
 		
-		self.parse_date(data[0] + " " + data[1])
+		self.date = parse_date(data[0] + " " + data[1])
 		self.duration = data[2]
 		self.protocol = data[3]
 		self.skipped =False
-		ip, skipped =ip_and_port(data[4])
-
-		if skipped:
-			return
-
-		self.source_ip = ip
-
-		ip, skipped= ip_and_port(data[6])
-
-		if skipped:
-			return
-
-		self.destination = ip
-
+		self.source_ip =ip_and_port(data[4])
+		self.destination = ip_and_port(data[6])
 		self.flags = data[7]
 		self.tos = data[8]
-		print (self.tos)
+		#print (self.tos)
 
 
-	def parse_date(self, date):
-		self.date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
 
-list_of_data = []
+lines = read_file("capture20110811.pcap.netflow.labeled")
+
+packets = []
 for l in lines[1:]:
-	Line(l)
+	packets.append(Packet(l))
+
+print((len(lines) -1) == len(packets))
