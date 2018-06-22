@@ -7,7 +7,7 @@ s10_flows = read_file("capture20110811.pcap.netflow.labeled")
 
 #parse the lines, filter out all background packets
 scenario10 = []
-for l in s10_flows[1:1000000]:
+for l in s10_flows[1:]:
     packet = Packet(l)
     if(packet.label != 'Background'):
         scenario10.append(packet)
@@ -24,10 +24,10 @@ for x in scenario10:
         s10legit.append(x)
 
 # construct the lists for the scatterplot
-durations_bots = [x.duration for x in s10bots]
-durations_legit = [x.duration for x in s10legit]
-bytes_bots = [x.bytes for x in s10bots]
-bytes_legit = [x.bytes for x in s10legit]
+durations_bots = [x.tos for x in s10bots]
+durations_legit = [x.tos for x in s10legit]
+bytes_bots = [x.protocol for x in s10bots]
+bytes_legit = [x.protocol for x in s10legit]
 
 #Create the plot
 plt.scatter(durations_bots, bytes_bots,c='r')
@@ -35,7 +35,10 @@ plt.scatter(durations_legit, bytes_legit,c='g')
 plt.show()
 
 # Pick an infected host
+# filter on source ip of the infected host
 
 # Visualize the relevant features
 
+
 # Discretize those features
+
