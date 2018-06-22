@@ -38,29 +38,31 @@ class Packet():
 
 	def parse_line(self,line):
 		data = line.split()
+		#print(len(data))
 		
 		self.date = parse_date(data[0] + " " + data[1])
 		self.duration = data[2]
 		self.protocol = data[3]
-		self.skipped =False
 		self.source_ip =ip_and_port(data[4])
-		self.destination = ip_and_port(data[6])
+		self.destination_ip = ip_and_port(data[6])
 		self.flags = data[7]
 		self.tos = data[8]
-		#print (self.tos)
 		self.packets = data[9]
-		#print(self.packets)
 		self.bytes = data[10]
 		self.flows = data[11]
 		self.label = data[12]
-		print(self.label)
+
+		if self.label != "Botnet" and self.label != "Background" and self.label != 'LEGITIMATE':
+			print (self.label)
 
 
 
+'''
 lines = read_file("capture20110811.pcap.netflow.labeled")
 
 packets = []
 for l in lines[1:]:
 	packets.append(Packet(l))
 
-print((len(lines) -1) == len(packets))
+#print((len(lines) -1) == len(packets))
+'''
