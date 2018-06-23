@@ -2,7 +2,7 @@ from pandas import datetime
 from parse_data import *
 import matplotlib.pyplot as plt
 
-s10_flows = read_file("capture20110811.pcap.netflow.labeled")
+s10_flows = read_file("capture20110818.pcap.netflow.labeled")
 # s11_flows = read_file("capture20110811-2.pcap.netflow.labeled")
 
 #parse the lines, filter out all background packets
