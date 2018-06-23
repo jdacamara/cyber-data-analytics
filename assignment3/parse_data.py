@@ -57,9 +57,9 @@ class Packet():
 
 
 
-'''
-lines = read_file("capture20110811.pcap.netflow.labeled")
+LINES = read_file("capture20110811.pcap.netflow.labeled")
 
+'''
 packets = []
 for l in lines[1:]:
 	packets.append(Packet(l))

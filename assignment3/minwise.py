@@ -2,7 +2,7 @@ import random
 import operator
 import time
 
-from parse_data import Packet, read_file
+from parse_data import Packet, LINES
 
 class MinWise:
 
@@ -45,26 +45,25 @@ start = time.time()
 
 min_wise = MinWise(k = 100)
 all_records = []
-amount_of_botnet = 0 
+amount_of_ip = 0 
 
-lines = read_file("capture20110811.pcap.netflow.labeled")
+#lines = read_file("capture20110811.pcap.netflow.labeled")
 
 #print("Len of lines = %s" %len(lines))
 
 
-for l in lines[1:]:
+for l in LINES[1:]:
 
 	p = Packet(l)
- 
 
-	if p.source_ip == "147.32.84.165":
-		ip = p.destination_ip
-	elif p.destination_ip == "147.32.84.165":
-		ip = p.source_ip
-	else:
+	'''
+	if p.source_ip != "147.32.84.165":
 		continue
+ 	'''
 
-	amount_of_botnet = amount_of_botnet + 1	
+	ip = p.destination_ip
+
+	amount_of_ip = amount_of_ip + 1	
 	rand = random.random()
 	#all_records.append((rand, ip))
 	min_wise.update_min_wise_list(rand, ip)
@@ -72,11 +71,12 @@ for l in lines[1:]:
 #top_ten = get_top_k(all_records)
 top_ten = get_top_k(min_wise.min_wise_list)
 
-print('Amount of botnet = %s' %amount_of_botnet)
+print('Amount of botnet = %s' %amount_of_ip)
 
 for ip, count in top_ten:
 	percent = (count / min_wise.k) * 100
-	print("%s & %.1f & %s \\\\" %(ip, percent, int((percent /100) * amount_of_botnet)))
+	print("%s & %.1f & %s \\\\" %(ip, percent, int((percent /100) * amount_of_ip)))
+	#print("%s & %.1f & %s \\\\" %(ip, percent, count))
 
 
 print ('It took ', time.time() - start, ' seconds.')
