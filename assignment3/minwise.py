@@ -2,7 +2,7 @@ import random
 import operator
 import time
 
-from parse_data import Packet, LINES
+from parse_data import Packet, read_file
 
 class MinWise:
 
@@ -40,44 +40,51 @@ def get_top_k(list_values, k = 10):
 
 	return sorted(top_k.items(), key=lambda x: x[1], reverse = True)[:k]
 
+k_values = [25, 50, 100, 1000]
+#k_values = [25]
 
-start = time.time()
+for k_value in k_values:
+	print(k_value)
+	start = time.time()
 
-min_wise = MinWise(k = 100)
-all_records = []
-amount_of_ip = 0 
+	min_wise = MinWise(k = k_value)
+	all_records = []
+	amount_of_ip = 0 
 
-#lines = read_file("capture20110811.pcap.netflow.labeled")
+	lines = read_file("capture20110811.pcap.netflow.labeled")
 
-#print("Len of lines = %s" %len(lines))
-
-
-for l in LINES[1:]:
-
-	p = Packet(l)
-
-	'''
-	if p.source_ip != "147.32.84.165":
-		continue
- 	'''
-
-	ip = p.destination_ip
-
-	amount_of_ip = amount_of_ip + 1	
-	rand = random.random()
-	#all_records.append((rand, ip))
-	min_wise.update_min_wise_list(rand, ip)
-
-#top_ten = get_top_k(all_records)
-top_ten = get_top_k(min_wise.min_wise_list)
-
-print('Amount of botnet = %s' %amount_of_ip)
-
-for ip, count in top_ten:
-	percent = (count / min_wise.k) * 100
-	print("%s & %.1f & %s \\\\" %(ip, percent, int((percent /100) * amount_of_ip)))
-	#print("%s & %.1f & %s \\\\" %(ip, percent, count))
+	#print("Len of lines = %s" %len(lines))
 
 
-print ('It took ', time.time() - start, ' seconds.')
-print ("This was for k = %s" %min_wise.k)
+	for l in lines[1:]:
+
+		p = Packet(l)
+
+		
+		if p.source_ip != "147.32.84.165":
+			continue
+	 	
+
+		ip = p.destination_ip
+
+		amount_of_ip = amount_of_ip + 1	
+		rand = random.random()
+		all_records.append((rand, ip))
+		min_wise.update_min_wise_list(rand, ip)
+
+	top_ten = get_top_k(all_records)
+	#top_ten = get_top_k(min_wise.min_wise_list)
+
+	print('Amount of botnet = %s' %amount_of_ip)
+
+	for ip, count in top_ten:
+		percent = (count / min_wise.k) * 100
+		percent = (count/amount_of_ip) * 100
+		#print("%s & %.1f & %s \\\\" %(ip, percent, int((percent /100) * amount_of_ip)))
+		#print("%s & %.1f & %s \\\\" %(ip, percent, count))
+
+		print("%s & %.1f & %s \\\\" %(ip, percent, count))
+
+
+	print ('It took ', time.time() - start, ' seconds.')
+	print ("This was for k = %s" %min_wise.k)
