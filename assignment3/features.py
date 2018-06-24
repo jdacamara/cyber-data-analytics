@@ -38,6 +38,7 @@ if __name__ == "__main__":
 	infected_host_data = host_data(clean_dataset, infected_host)
 
 
+	
 	sns.countplot(x="Protocol", data = infected_host_data)
 	plt.show()
 	plt.close()
@@ -72,31 +73,14 @@ if __name__ == "__main__":
 	packets_frame = pd.DataFrame(packet_bar_chart)
 	bytes_frame = pd.DataFrame(bytes_bar_chart)
 
+
+	plt.xlabel("Label")
+
 	sns.barplot(x = 'Label', y = 'Packets', data = packets_frame)
 	plt.show()
 	plt.close()
 
+	plt.xlabel("Label")
 	sns.barplot(x = 'Label', y = 'Bytes', data = bytes_frame)
 	plt.show()
 	plt.close()
-
-
-#infected_discritized = pd.DataFrame()
-
-#infected_discritized['Packet'] = dat
-
-
-
-
-'''
-sns.countplot(data=infected_host_data)
-plt.figure()
-plt.show()
-'''
-#clean_dataset['StartTime'] = pd.to_datetime(clean_dataset['StartTime'], format='%Y-%m-%d %H:%M:%S')
-#clean_dataset = clean_dataset.loc[clean_dataset['StartTime']]
-
-
-#print( clean_dataset)
-
-
