@@ -79,11 +79,11 @@ for k_value in k_values:
 
 	for ip, count in top_ten:
 		percent = (count / min_wise.k) * 100
-		percent = (count/amount_of_ip) * 100
-		#print("%s & %.1f & %s \\\\" %(ip, percent, int((percent /100) * amount_of_ip)))
+		#percent = (count/amount_of_ip) * 100
+		print("%s & %.1f & %s \\\\" %(ip, percent, int((percent /100) * amount_of_ip)))
 		#print("%s & %.1f & %s \\\\" %(ip, percent, count))
 
-		print("%s & %.1f & %s \\\\" %(ip, percent, count))
+		#print("%s & %.1f & %s \\\\" %(ip, percent, count))
 
 
 	print ('It took ', time.time() - start, ' seconds.')

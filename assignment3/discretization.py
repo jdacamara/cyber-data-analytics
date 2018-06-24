@@ -44,12 +44,14 @@ infected_discretized = pd.DataFrame()
 split_list_for_packets = ordinal_rank(5, 'Packet', clean_dataset)
 
 
-
+#Discretization for the infected host
 infected_discretized['Packet'] = infect_host_data['Packet'].apply(lambda x : mapping(x, split_list_for_packets))
 infected_discretized['Protocol'] = pd.factorize(infect_host_data['Protocol'])[0]
 features = [infected_discretized[name].nunique() for name in infected_discretized.columns[0:2]]
+
 infected_discretized['Code'] = infected_discretized.apply(lambda x : encode_netflow(x, features), axis = 1)
 
+#Discretization for benign traffic.
 discretized = pd.DataFrame()
 
 discretized['Packet'] = clean_dataset['Packet'].apply(lambda x : mapping(x, split_list_for_packets))
@@ -57,12 +59,10 @@ discretized['Protocol'] = pd.factorize(clean_dataset['Protocol'])[0]
 
 features = [discretized[name].nunique(name) for name in discretized.columns[0:2]]
 
-
+#Adds the code to orginal dataset
 discretized['Code'] = discretized.apply(lambda x : encode_netflow(x, features), axis = 1)
 clean_dataset['Code'] =  discretized['Code']
 
-discretized['Source'] = clean_dataset['Source']
-discretized['Destination'] = clean_dataset['Destination']
-discretized['StartTime'] = clean_dataset['StartTime']
 
-
+#Print the first 5 values.
+print (clean_dataset.head())

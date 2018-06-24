@@ -1,10 +1,9 @@
 import numpy as np
-import mmh3
 import time
 import math
 
 from random import randint
-from parse_data import Packet, LINES
+from parse_data import Packet, read_file
 
 class CountMin:
 
@@ -29,14 +28,14 @@ class CountMin:
 		self.count = self.count + 1 
 		for i in range(self.d):
 			seed  = self.seeds[i]
-			position = mmh3.hash(item, seed) % self.w
+			position = hash(item + str(seed)) % self.w
 			self.matrix[i][position] = self.matrix[i][position] + 1
 
 	def get_count(self,item):
 		counts = []
 		for i in range(self.d):
 			seed  = self.seeds[i]
-			position = mmh3.hash(item, seed) % self.w
+			position = hash(item + str(seed))  % self.w
 			value = self.matrix[i][position]
 			counts.append(value)
 
@@ -50,47 +49,63 @@ class CountMin:
 
 		return sorted(dic.items(), key=lambda x: x[1], reverse = True)[:k]
 
-def optimized_countmin(self, delta = 0.01, epsilon =  0.00001):
-	w = 2/epsilon
-	d = math.log(1/delta)
+def optimized_countmin( delta = 0.01, epsilon =  0.00001):
+	w = int(2/epsilon)
+	d = int(math.log(1/delta))
 
 	count_min = CountMin(w, d)
 	return count_min
 
+lines = read_file("capture20110811.pcap.netflow.labeled")
 
 
-start = time.time()
-c = CountMin(100,10)
-
-amount_of_ip = 0
-list_of_ip = []
-
-for l in LINES[1:]:
-
-	p = Packet(l)
-	'''
-	if p.source_ip != "147.32.84.165":
-		continue
-	'''
-
-	ip = p.destination_ip
-
-	c.add_item(ip)
-	amount_of_ip = amount_of_ip +1 
-
-	if ip not in list_of_ip:
-		list_of_ip.append(ip)
+epsilons =  [0.0001,0.001, 0.01, 0.1]
+deltas =  [0.0001,0.001, 0.01, 0.1]
 
 
-results = c.get_top_k(list_of_ip)
-
-print ("amount_of_ip = %s" %amount_of_ip)
-for ip, estimation in results:
-	percent = (estimation / amount_of_ip) *100
-
-	print("%s & %.1f & %s \\\\" %(ip, percent, estimation))
+hashes = [5,10,15]
+k_values = [25, 50, 100, 1000]
 
 
 
-print ('It took ', time.time() - start, ' seconds.')
-print ("This was for w = %s" %c.w)
+
+for epsilon in epsilons:
+	for delta in deltas:
+		#print(delta, epsilon)
+
+		start = time.time()
+		c = optimized_countmin(delta = delta, epsilon = epsilon)
+		#c = CountMin(k_value, h)
+		amount_of_ip = 0
+		list_of_ip = []
+
+		for l in lines[1:]:
+
+			p = Packet(l)
+			
+			if p.source_ip != "147.32.84.165":
+				continue
+			
+
+			ip = p.destination_ip
+
+			c.add_item(ip)
+
+
+			amount_of_ip = amount_of_ip +1 
+
+			if ip not in list_of_ip:
+				list_of_ip.append(ip)
+
+		results = c.get_top_k(list_of_ip)
+
+		print ("amount_of_ip = %s" %amount_of_ip)
+		for ip, estimation in results:
+			percent = (estimation / amount_of_ip) *100
+
+			print("%s & %.1f & %s \\\\" %(ip, percent, estimation))
+
+
+
+		print ('It took ', time.time() - start, ' seconds.')
+		print ("W = %s, D = %s, epsilon = %s , delta = %s" %(c.w, c.d, epsilon, delta))
