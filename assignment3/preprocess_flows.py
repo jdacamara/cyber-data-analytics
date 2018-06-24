@@ -18,10 +18,10 @@ def preprocess(filename):
     return arr
 
 def as_training_data(arr):
-    return [[x.date, x.duration, x.protocol, x.source_ip, x.destination_ip, x.flags, x.tos, x.packets, x.bytes, x.flows, x.label] for x in arr]
+    return [[x.duration, x.protocol, x.tos, x.packets, x.bytes, x.flows, x.label] for x in arr]
 
 def as_test_data(arr):
-    return [[x.date, x.duration, x.protocol, x.source_ip, x.destination_ip, x.flags, x.tos, x.packets, x.bytes, x.flows] for x in arr]
+    return [[x.duration, x.protocol, x.tos, x.packets, x.bytes, x.flows] for x in arr]
 
 
 def get_labels(arr):
