@@ -1,4 +1,4 @@
-from pandas import datetime
+from pandas import datetime, DataFrame, to_datetime
 
 def read_file(filename):
 	with open(filename) as f:
@@ -55,9 +55,30 @@ class Packet():
 		if self.label != "Botnet" and self.label != "Background" and self.label != 'LEGITIMATE':
 			print (self.label)
 
+	def convert_to_list(self, position):
+		result = []
+
+		if position % 1000000 == 0: 
+			print(position)
+		#result.append(position)
+		result.append(self.date)
+		result.append(self.duration)
+		result.append(self.protocol)
+		result.append(self.source_ip)
+		result.append(self.destination_ip)
+		result.append(self.flags)
+		result.append(self.tos)
+		result.append(self.packets)
+		result.append(self.bytes)
+		result.append(self.flows)
+		result.append(self.label)
+
+		return result 
 
 
-LINES = read_file("capture20110811.pcap.netflow.labeled")
+
+#LINES = read_file("capture20110811.pcap.netflow.labeled")
+
 
 '''
 packets = []
@@ -66,3 +87,48 @@ for l in lines[1:]:
 
 #print((len(lines) -1) == len(packets))
 '''
+
+def covert_to_dataframe(filename):
+	columns=['StartTime','Duration', 'Protocol', 'Source','Direction','Destination',
+	 'Flag','Tos','Packet','Bytes','Flows','Label']
+
+	list_of_packets = []
+
+
+	with open(filename) as netflow_file:
+		for i, line in enumerate(netflow_file):
+			
+			
+			flow = []
+			if i > 0:
+
+				#packet = Packet(line)
+				#list_of_packets.append(packet.convert_to_list(i))
+
+
+				
+				data = line.split("\t")
+
+				if len(data) >= 13:
+					for attribute in data:
+						attribute.strip()	
+						if len(attribute) == 0:
+							flow = data.remove(attribute)
+
+				if len(data) >= 3:
+					data[3] = data[3].split(':')[0]
+				if len(data) >= 5:
+					data[5] = data[5].split(':')[0]
+				
+
+				if flow:
+					list_of_packets.append(flow)
+				else:
+					list_of_packets.append(data)
+
+
+
+	dataframe = DataFrame(list_of_packets, columns = columns)
+	#dataframe.to_csv("cvs_data", sep=',')
+
+	return dataframe
