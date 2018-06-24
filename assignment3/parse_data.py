@@ -41,19 +41,35 @@ class Packet():
 		#print(len(data))
 		
 		self.date = parse_date(data[0] + " " + data[1])
-		self.duration = data[2]
-		self.protocol = data[3]
-		self.source_ip =ip_and_port(data[4])
+		self.duration = float(data[2])
+
+		if data[3] == "TCP":
+			self.protocol = 1
+		elif data[3] == "UDP":
+			self.protocol = 2
+		elif data[3] != 'ICMP':
+			self.protocol = 3
+		else:
+			self.protocol = None
+			print (data[3])
+
+		self.source_ip = ip_and_port(data[4])
 		self.destination_ip = ip_and_port(data[6])
 		self.flags = data[7]
-		self.tos = data[8]
-		self.packets = data[9]
-		self.bytes = data[10]
-		self.flows = data[11]
-		self.label = data[12]
+		self.tos = int(data[8])
+		self.packets = int(data[9])
+		self.bytes = int(data[10])
+		self.flows = int(data[11])
 
-		if self.label != "Botnet" and self.label != "Background" and self.label != 'LEGITIMATE':
-			print (self.label)
+		if data[12] == "Botnet":
+			self.label = 1
+		elif data[12] == "Background":
+			self.label = 0
+		elif data[12] != 'LEGITIMATE':
+			self.label = 2
+		else:
+			self.label = None
+			print (data[12])
 
 	def convert_to_list(self, position):
 		result = []
@@ -78,7 +94,6 @@ class Packet():
 
 
 #LINES = read_file("capture20110811.pcap.netflow.labeled")
-
 
 '''
 packets = []

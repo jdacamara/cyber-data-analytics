@@ -2,37 +2,53 @@ from pandas import datetime
 from parse_data import *
 import matplotlib.pyplot as plt
 
-s10_flows = read_file("capture20110811.pcap.netflow.labeled")
-# s11_flows = read_file("capture20110811-2.pcap.netflow.labeled")
+def preprocess(filename):
+    flows = read_file(filename)
 
-#parse the lines, filter out all background packets
-scenario10 = []
-for l in s10_flows[1:]:
-    packet = Packet(l)
-    if(packet.label != 'Background'):
-        scenario10.append(packet)
+    #parse the lines, filter out all background packets
+    arr = []
+    for l in flows[1:500]:
+        packet = Packet(l)
+        if(packet.label != 0):
+            arr.append(packet)
 
-print(type(scenario10))
-print(len(scenario10))
+    print(type(arr))
+    print(len(arr))
 
-s10bots=[]
-s10legit=[]
-for x in scenario10:
-    if x.label == 'Botnet':
-        s10bots.append(x)
-    else:
-        s10legit.append(x)
+    return arr
 
-# construct the lists for the scatterplot
-durations_bots = [x.tos for x in s10bots]
-durations_legit = [x.tos for x in s10legit]
-bytes_bots = [x.protocol for x in s10bots]
-bytes_legit = [x.protocol for x in s10legit]
+def as_training_data(arr):
+    return [[x.duration, x.protocol, x.tos, x.packets, x.bytes, x.flows, x.label] for x in arr]
 
-#Create the plot
-plt.scatter(durations_bots, bytes_bots,c='r')
-plt.scatter(durations_legit, bytes_legit,c='g')
-plt.show()
+def as_test_data(arr):
+    return [[x.duration, x.protocol, x.tos, x.packets, x.bytes, x.flows] for x in arr]
+
+
+def get_labels(arr):
+    return [x.label for x in arr]
+
+def separate_botnet(data):
+    bots=[]
+    legit=[]
+    for x in data:
+        if x.label == 'Botnet':
+            bots.append(x)
+        else:
+            legit.append(x)
+
+    return bots, legit
+
+def visualize(bots, legit):
+    # construct the lists for the scatterplot
+    durations_bots = [a.tos for a in bots]
+    durations_legit = [x.tos for x in legit]
+    bytes_bots = [x.protocol for x in bots]
+    bytes_legit = [x.protocol for x in legit]
+
+    #Create the plot
+    plt.scatter(durations_bots, bytes_bots,c='r')
+    plt.scatter(durations_legit, bytes_legit,c='g')
+    plt.show()
 
 # Pick an infected host
 # filter on source ip of the infected host
