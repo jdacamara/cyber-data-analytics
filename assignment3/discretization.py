@@ -41,7 +41,9 @@ infect_host_data = host_data(clean_dataset, infected_host)
 
 infected_discretized = pd.DataFrame()
 
-split_list_for_packets = ordinal_rank(4, 'Packet', clean_dataset)
+split_list_for_packets = ordinal_rank(5, 'Packet', clean_dataset)
+
+
 
 infected_discretized['Packet'] = infect_host_data['Packet'].apply(lambda x : mapping(x, split_list_for_packets))
 infected_discretized['Protocol'] = pd.factorize(infect_host_data['Protocol'])[0]
