@@ -51,7 +51,7 @@ class Packet():
 			self.protocol = 3
 		else:
 			self.protocol = None
-			print (data[3])
+			
 
 		self.source_ip = ip_and_port(data[4])
 		self.destination_ip = ip_and_port(data[6])
@@ -69,7 +69,7 @@ class Packet():
 			self.label = 2
 		else:
 			self.label = None
-			print (data[12])
+			#print (data[12])
 
 	def convert_to_list(self, position):
 		result = []
